@@ -51,15 +51,25 @@ func! Verdict()
         endif
     endwhile
 
-    " insert new lines into buffer
-    call setline('.', sentences)
-
     " store current cursor position
     let cursor_prev = getpos('.')
 
     " compute difference in number of lines
-    " if this difference is positive, less lines are present now
+    " if this difference is negative, we need to add some additional lines in
+    " order to prevent overwriting non-formatted text parts
+    " if it is positive, we can remove left-over lines after inserting our
+    " newly formatted text
     let diff = v:count - len(sentences)
+
+    " insert additional lines in order not to overwrite other text parts
+    while diff < 0
+        call append(line('.'), '')
+        let diff = diff + 1
+    endwhile
+
+    " insert new lines into buffer
+    call setline('.', sentences)
+
     " all superfluous lines need to be removed
     while diff > 0
         call cursor(cursor_prev[0] + len(sentences) + diff, 1)
