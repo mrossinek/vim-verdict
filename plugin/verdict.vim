@@ -96,13 +96,21 @@ func! verdict#Indent( line_num )
 endfunc
 
 func! verdict#Init()
-    let b:prev_formatexpr=&formatexpr
-    let b:prev_indentexpr=&indentexpr
-    setlocal formatexpr=verdict#Format()
-    setlocal indentexpr=verdict#Indent(v:lnum)
+    if &l:formatexpr !=# 'verdict#Format()'
+        let b:prev_formatexpr = &l:formatexpr
+        setlocal formatexpr=verdict#Format()
+    endif
+    if &l:indentexpr !=# 'verdict#Indent(v:lnum)'
+        let b:prev_indentexpr = &l:indentexpr
+        setlocal indentexpr=verdict#Indent(v:lnum)
+    endif
 endfunc
 
 func! verdict#Deinit()
-    setlocal formatexpr=&b:prev_formatexpr
-    setlocal indentexpr=&b:prev_indentexpr
+    if exists('b:prev_formatexpr')
+        let &l:formatexpr=b:prev_formatexpr
+    endif
+    if exists('b:prev_indentexpr')
+        let &l:indentexpr=b:prev_indentexpr
+    endif
 endfunc
