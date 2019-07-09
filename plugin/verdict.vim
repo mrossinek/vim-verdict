@@ -1,6 +1,11 @@
-let g:verdict_sentence_delims = '.!?'
-let g:verdict_sentence_suffixes = ')]}"'''
+" do not load multiple times
+if exists('g:verdict_loaded')
+    finish
+endif
 
+" formatting function
+" Usage: :setlocal formatexpr=verdict#Format()
+"        now you can use gq{motion} to format the text moved over by motion
 func! verdict#Format()
     " only reformat on explicit gq command
     if mode() !=# 'n'
@@ -29,7 +34,7 @@ func! verdict#Format()
         " remove multiple whitespace occurences
         let paragraph = substitute(paragraph, '\v\s\zs\s+', '', 'g')
         " format paragraph
-        let block = verdict#FormatParagraph(paragraph)
+        let block = s:FormatParagraph(paragraph)
         " append to output
         for bline in block
             call add(formatted, bline)
@@ -69,7 +74,10 @@ func! verdict#Format()
     return 0
 endfunc
 
-func! verdict#FormatParagraph( text )
+" internal paragraph formatting function
+" this function is used internally since verdict#Format() works through the
+" text paragraph-wise
+func! s:FormatParagraph( text )
     " split the text into individual sentences
     let sentences = split(a:text, '\v([' . g:verdict_sentence_delims . '])([' . escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*\zs\s+')
 
@@ -110,13 +118,16 @@ func! verdict#FormatParagraph( text )
     return sentences
 endfunc
 
-func! verdict#Indent( line_num )
+" indenting function
+" Usage: :setlocal indentexpr=verdict#Indent(v:lnum)
+"        now automatic indentation will work while typing in insert mode
+func! verdict#Indent( lnum )
     " the first line of the file should not be indented
-    if a:line_num == 0
+    if a:lnum == 0
         return 0
     endif
     " get previous line
-    let prevline = getline(a:line_num - 1)
+    let prevline = getline(a:lnum - 1)
     if prevline =~# '^\s*$'
         " if empty: do not indent since new paragraph means new sentence
         return 0
@@ -129,7 +140,17 @@ func! verdict#Indent( line_num )
     endif
 endfunc
 
+" initialization function
+" Usage: :call verdict#Init()
+"        used to initialize verdict
 func! verdict#Init()
+    if !exists('g:verdict_sentence_delims')
+        let g:verdict_sentence_delims = '.!?'
+    endif
+    if !exists('g:verdict_sentence_suffixes')
+        let g:verdict_sentence_suffixes = ')]}"'''
+    endif
+
     if &l:formatexpr !=# 'verdict#Format()'
         let b:prev_formatexpr = &l:formatexpr
         setlocal formatexpr=verdict#Format()
@@ -140,6 +161,9 @@ func! verdict#Init()
     endif
 endfunc
 
+" de-initialization function
+" Usage: :call verdict#Deinit()
+"        used to de-initialize verdict
 func! verdict#Deinit()
     if exists('b:prev_formatexpr')
         let &l:formatexpr=b:prev_formatexpr
@@ -148,3 +172,5 @@ func! verdict#Deinit()
         let &l:indentexpr=b:prev_indentexpr
     endif
 endfunc
+
+let g:verdict_loaded = 1
