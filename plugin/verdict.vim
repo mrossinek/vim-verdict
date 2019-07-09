@@ -6,18 +6,71 @@ func! verdict#Format()
     endif
     let lines = getline(v:lnum, v:lnum + v:count - 1)
 
-    " concatenate all lines into a single string
-    let text = lines[0]
-    let index = 1
+    let formatted = []
+    let paragraph = ''
+    " iterate over all lines
+    let index = 0
     while index < len(lines)
-        let text = join([text, lines[index]], ' ')
+        " concatenate paragraph into a single string
+        while lines[index] !~# '^\s*$'
+            if paragraph =~# '^\s*$'
+                " if string is actually empty simply add line
+                " (this prevents an additional space at the beginning)
+                let paragraph = paragraph . lines[index]
+            else
+                " else use join
+                let paragraph = join([paragraph, lines[index]], ' ')
+            endif
+            let index = index + 1
+        endwhile
+        " remove multiple whitespace occurences
+        let paragraph = substitute(paragraph, '\v\s\zs\s+', '', 'g')
+        " format paragraph
+        let block = verdict#FormatParagraph(paragraph)
+        " append to output
+        for bline in block
+            call add(formatted, bline)
+        endfor
+        " also append current line since it might be an empty line which needs
+        " to be preserved
+        call add(formatted, lines[index])
+
+        let paragraph = ''
         let index = index + 1
     endwhile
 
-    " now split the text into individual sentences
-    let sentences = split(text, '\v([.!?])([\)\]\}\"''])*\zs\s+')
+    " compute difference in number of lines
+    " if this difference is negative, we need to add some additional lines in
+    " order to prevent overwriting non-formatted text parts
+    " if it is positive, we can remove left-over lines after inserting our
+    " newly formatted text
+    let diff = v:count - len(formatted)
 
-    " iterative over all sentences
+    " insert additional lines in order not to overwrite other text parts
+    while diff < 0
+        call append(v:lnum, '')
+        let diff = diff + 1
+    endwhile
+
+    " insert formatted lines into buffer
+    call setline(v:lnum, formatted)
+
+    " all superfluous lines need to be removed
+    while diff > 0
+        call cursor(v:lnum + len(formatted) - 1 + diff, 1)
+        delete
+        let diff = diff - 1
+    endwhile
+
+    " do not run internal formatter!
+    return 0
+endfunc
+
+func! verdict#FormatParagraph( text )
+    " split the text into individual sentences
+    let sentences = split(a:text, '\v([.!?])([\)\]\}\"''])*\zs\s+')
+
+    " iterate over all sentences
     let index = 0
     while index < len(sentences)
         let sentence = sentences[index]
@@ -51,34 +104,7 @@ func! verdict#Format()
         endif
     endwhile
 
-    " store current cursor position
-    let cursor_prev = getpos('.')
-
-    " compute difference in number of lines
-    " if this difference is negative, we need to add some additional lines in
-    " order to prevent overwriting non-formatted text parts
-    " if it is positive, we can remove left-over lines after inserting our
-    " newly formatted text
-    let diff = v:count - len(sentences)
-
-    " insert additional lines in order not to overwrite other text parts
-    while diff < 0
-        call append(line('.'), '')
-        let diff = diff + 1
-    endwhile
-
-    " insert new lines into buffer
-    call setline('.', sentences)
-
-    " all superfluous lines need to be removed
-    while diff > 0
-        call cursor(cursor_prev[0] + len(sentences) + diff, 1)
-        delete
-        let diff = diff - 1
-    endwhile
-
-    " do not run internal formatter!
-    return 0
+    return sentences
 endfunc
 
 func! verdict#Indent( line_num )
