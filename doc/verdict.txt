@@ -1,0 +1,68 @@
+*verdict.txt*  Plugin to help writing prose in a VCS-friendly fashion.
+
+Author:  Max Rossmannek
+License: MIT
+
+==============================================================================
+INTRODUCTION                                     *verdict*
+
+|verdict| is a plugin to help you write prose in a VCS-friendly fashion.
+Its design ideas stem from this blog post:
+  http://dustycloud.org/blog/vcs-friendly-patchable-document-line-wrapping/
+The idea is ensure meaningful diffs while still allowing hard line-wrapping.
+This is achieved by ensuring the following syntax:
+
+  1. every sentence starts on a new line
+  2. no line should exceed the |textwidth| limit
+  3. if a sentence is continued on the next line, it is visually indented
+
+By sticking to these three principles, we can ensure meaningful diffs since
+  even hard-wrapped lines will result in diffs on a per-sentence (and not
+  per-paragraph) basis.
+Furthermore, we even benefit from a better structural presentation of work
+  through the additional indentation at inner-sentence linebreaks.
+
+==============================================================================
+USAGE                                            *verdict-usage*
+
+Since the functionality provided by |verdict| can be seen as rather
+  restrictive to some use-cases, it is not enabled by default for any
+  filetype.
+Therefore, in order to use it, you must enable it explicitly where
+  appropriate.
+You can do so by calling |verdict#Init()|.
+You may also deactivate again with the corresponding |verdict#Deinit()|
+  function.
+
+After you have activated |verdict| you will have the following functionality
+  at your disposal:
+
+  1. Automatic indentation in insert mode (via |indentexpr|)
+  2. Formatting with the help of |gq|`{motion}` (via |formatexpr|)
+
+Note: I recommend using the plugin https://github.com/embear/vim-localvimrc
+  which allows you to use local `.lvimrc` files to specify additional settings
+  on a project-basis.
+This will allow you to automatize the initialization of |verdict| where you
+  need it on a regular basis.
+You could for example add a single `.lvimrc` file to the root of your website,
+  notes directory or tex project.
+
+==============================================================================
+CONFIGURATION                                    *verdict-configuration*
+
+*g:verdict_loaded*                          `Default: 0`
+Set this boolean to 1 in order to disable the plugin.
+
+*g:verdict_sentence_delims*                `Default: .!?`
+This string contains all symbols that delimit a sentence and, thus, will cause
+  a hard linebreak.
+
+*g:verdict_sentence_suffixes*              `Default: )]}"''`
+This string contains all symbols that may follow any of delimiters after the
+  end of the sentence.
+These symbols may come in any number and order and will not be broken onto the
+  next line.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:
