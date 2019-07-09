@@ -1,3 +1,6 @@
+let g:verdict_sentence_delims = '.!?'
+let g:verdict_sentence_suffixes = ')]}"'''
+
 func! verdict#Format()
     " only reformat on explicit gq command
     if mode() !=# 'n'
@@ -68,7 +71,7 @@ endfunc
 
 func! verdict#FormatParagraph( text )
     " split the text into individual sentences
-    let sentences = split(a:text, '\v([.!?])([\)\]\}\"''])*\zs\s+')
+    let sentences = split(a:text, '\v([' . g:verdict_sentence_delims . '])([' . escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*\zs\s+')
 
     " iterate over all sentences
     let index = 0
@@ -117,7 +120,7 @@ func! verdict#Indent( line_num )
     if prevline =~# '^\s*$'
         " if empty: do not indent since new paragraph means new sentence
         return 0
-    elseif prevline =~# '\v([.!?])([\)\]\}\"''])*$'
+    elseif prevline =~# '\v([' . g:verdict_sentence_delims . '])([' . escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*$'
         " if matches end of sentence: no indent
         return 0
     else
