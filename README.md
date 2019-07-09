@@ -42,9 +42,9 @@ Furthermore, you will be able to use `gq{motion}` to format the text moved over
 **Note:** I recommend using the plugin [localvimrc](https://github.com/embear/vim-localvimrc) which allows you to use local
   `.lvimrc` files to specify additional settings on a project-basis.
 This will allow you to automatize the initialization of `vim-verdict` where you
-  need in on a regular basis.
-You could for example add single `.lvimrc` file to the root of your website, notes
-  directory or tex project.
+  need it on a regular basis.
+You could for example add a single `.lvimrc` file to the root of your website,
+  notes directory or tex project.
 
 Configuration
 -------------
@@ -52,6 +52,6 @@ Configuration
 `vim-verdict` makes use of the following variables:
 
 * `g:verdict_loaded`: if existing, verdict is not loaded again [Default: `1` (after initial loading)]
-* `g:verdict_sentences_delims`: symbols delimiting a sentence [Default: `.!?`]
-* `g:verdict_sentences_suffixes`: symbols which may follow a delimiter [Default: `)]}"''`]
+* `g:verdict_sentence_delims`: symbols delimiting a sentence [Default: `.!?`]
+* `g:verdict_sentence_suffixes`: symbols which may follow a delimiter [Default: `)]}"''`]
 
