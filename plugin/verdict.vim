@@ -82,15 +82,20 @@ func! verdict#Format()
 endfunc
 
 func! verdict#Indent( line_num )
+    " the first line of the file should not be indented
     if a:line_num == 0
         return 0
     endif
+    " get previous line
     let prevline = getline(a:line_num - 1)
     if prevline =~# '^\s*$'
+        " if empty: do not indent since new paragraph means new sentence
         return 0
     elseif prevline =~# '\v([.!?])([\)\]\}\"''])*$'
+        " if matches end of sentence: no indent
         return 0
     else
+        " otherwise insert normal indent
         return 2
     endif
 endfunc
