@@ -47,6 +47,9 @@ func! verdict#Format()
         let index = index + 1
     endwhile
 
+    " store insertion position
+    let line_num = v:lnum
+
     " compute difference in number of lines
     " if this difference is negative, we need to add some additional lines in
     " order to prevent overwriting non-formatted text parts
@@ -56,16 +59,16 @@ func! verdict#Format()
 
     " insert additional lines in order not to overwrite other text parts
     while diff < 0
-        call append(v:lnum, '')
+        call append(line_num, '')
         let diff = diff + 1
     endwhile
 
     " insert formatted lines into buffer
-    call setline(v:lnum, formatted)
+    call setline(line_num, formatted)
 
     " all superfluous lines need to be removed
     while diff > 0
-        call cursor(v:lnum + len(formatted) - 1 + diff, 1)
+        call cursor(line_num + len(formatted) - 1 + diff, 1)
         delete
         let diff = diff - 1
     endwhile
@@ -121,13 +124,13 @@ endfunc
 " indenting function
 " Usage: :setlocal indentexpr=verdict#Indent(v:lnum)
 "        now automatic indentation will work while typing in insert mode
-func! verdict#Indent( lnum )
+func! verdict#Indent( line_num )
     " the first line of the file should not be indented
-    if a:lnum == 0
+    if a:line_num == 0
         return 0
     endif
     " get previous line
-    let prevline = getline(a:lnum - 1)
+    let prevline = getline(a:line_num - 1)
     if prevline =~# '^\s*$'
         " if empty: do not indent since new paragraph means new sentence
         return 0
