@@ -1,4 +1,4 @@
-func! Verdict()
+func! verdict#Format()
     " only reformat on explicit gq command
     if mode() !=# 'n'
         " fall back to Vims internal reformatting
@@ -79,4 +79,18 @@ func! Verdict()
 
     " do not run internal formatter!
     return 0
+endfunc
+
+func! verdict#Indent( line_num )
+    if a:line_num == 0
+        return 0
+    endif
+    let prevline = getline(a:line_num - 1)
+    if prevline =~# '^\s*$'
+        return 0
+    elseif prevline =~# '\v([.!?])([\)\]\}\"''])*$'
+        return 0
+    else
+        return 2
+    endif
 endfunc
