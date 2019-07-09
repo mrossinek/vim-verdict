@@ -94,3 +94,15 @@ func! verdict#Indent( line_num )
         return 2
     endif
 endfunc
+
+func! verdict#Init()
+    let b:prev_formatexpr=&formatexpr
+    let b:prev_indentexpr=&indentexpr
+    setlocal formatexpr=verdict#Format()
+    setlocal indentexpr=verdict#Indent(v:lnum)
+endfunc
+
+func! verdict#Deinit()
+    setlocal formatexpr=&b:prev_formatexpr
+    setlocal indentexpr=&b:prev_indentexpr
+endfunc
