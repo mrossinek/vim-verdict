@@ -81,6 +81,15 @@ endfunc
 " this function is used internally since verdict#Format() works through the
 " text paragraph-wise
 func! s:FormatParagraph( text )
+    " determine local textwidth
+    " Note: this is done here to obey user overwritten textwidth settings
+    "       during the session
+    if &l:textwidth ==# 0
+        let max_width = g:verdict_default_textwidth
+    else
+        let max_width = &l:textwidth
+    endif
+
     " split the text into individual sentences
     let sentences = split(a:text, '\v([' . g:verdict_sentence_delims . '])([' . escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*\zs\s+')
 
@@ -89,11 +98,11 @@ func! s:FormatParagraph( text )
     while index < len(sentences)
         let sentence = sentences[index]
         " if the length exceeds the specified maximum
-        if len(sentence) ># 80
+        if len(sentence) ># max_width
             let wrapped = ['']
             " split it word by word
             for word in split(sentence)
-                if len(wrapped[-1]) + len(word) + 1 >= 80
+                if len(wrapped[-1]) + len(word) + 1 >= max_width
                     " if split: add indentation for sentence continuation
                     call add(wrapped, '  ')
                 endif
@@ -152,6 +161,12 @@ func! verdict#Init()
     endif
     if !exists('g:verdict_sentence_suffixes')
         let g:verdict_sentence_suffixes = ')]}"'''
+    endif
+    if !exists('g:verdict_default_textwidth')
+        let g:verdict_default_textwidth = 80
+    endif
+    if &l:textwidth ==# 0
+        let &l:textwidth=g:verdict_default_textwidth
     endif
 
     if &l:formatexpr !=# 'verdict#Format()'

@@ -64,5 +64,9 @@ This string contains all symbols that may follow any of delimiters after the
 These symbols may come in any number and order and will not be broken onto the
   next line.
 
+*g:verdict_default_textwidth*              `Default: 80`
+This variable defines the default textwidth value used when the |textwidth| is
+  set to 0.
+
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:
