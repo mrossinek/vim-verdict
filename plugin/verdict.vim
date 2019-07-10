@@ -166,6 +166,7 @@ func! verdict#Init()
         let g:verdict_default_textwidth = 80
     endif
     if &l:textwidth ==# 0
+        let b:prev_textwidth = &l:textwidth
         let &l:textwidth=g:verdict_default_textwidth
     endif
 
@@ -188,6 +189,9 @@ func! verdict#Deinit()
     endif
     if exists('b:prev_indentexpr')
         let &l:indentexpr=b:prev_indentexpr
+    endif
+    if exists('b:prev_textwidth')
+        let &l:textwidth=b:prev_textwidth
     endif
 endfunc
 
