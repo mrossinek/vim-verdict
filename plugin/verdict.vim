@@ -91,7 +91,9 @@ func! s:FormatParagraph( text )
     endif
 
     " split the text into individual sentences
-    let sentences = split(a:text, '\v([' . escape(g:verdict_sentence_delims, g:verdict_sentence_delims) . '])([' . escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*\zs\s+')
+    let sentences = split(a:text, '\v([' .
+                \ escape(g:verdict_sentence_delims, g:verdict_sentence_delims) . '])([' .
+                \ escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*\zs\s+')
 
     " iterate over all sentences
     let index = 0
@@ -143,7 +145,9 @@ func! verdict#Indent( line_num )
     if prevline =~# '^\s*$'
         " if empty: do not indent since new paragraph means new sentence
         return 0
-    elseif prevline =~# '\v([' . escape(g:verdict_sentence_delims, g:verdict_sentence_delims) . '])([' . escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*$'
+    elseif prevline =~# '\v([' .
+                \ escape(g:verdict_sentence_delims, g:verdict_sentence_delims) . '])([' .
+                \ escape(g:verdict_sentence_suffixes, g:verdict_sentence_suffixes) . '])*$'
         " if matches end of sentence: no indent
         return 0
     else
