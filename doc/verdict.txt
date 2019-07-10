@@ -68,5 +68,9 @@ These symbols may come in any number and order and will not be broken onto the
 This variable defines the default textwidth value used when the |textwidth| is
   set to 0.
 
+*g:verdict_overwrite_shiftwidth*           `Default: <None>`
+Set this variable to a desired value which will be used to overwrite the
+  current |shiftwidth| setting upon initialization.
+
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:

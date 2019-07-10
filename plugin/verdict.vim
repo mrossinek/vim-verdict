@@ -106,7 +106,7 @@ func! s:FormatParagraph( text )
             for word in split(sentence)
                 if len(wrapped[-1]) + len(word) + 1 >= max_width
                     " if split: add indentation for sentence continuation
-                    call add(wrapped, '  ')
+                    call add(wrapped, repeat(' ', &l:shiftwidth))
                 endif
                 if wrapped[-1] =~# '^\s*$'
                     " if string is actually empty simply add word
@@ -152,7 +152,7 @@ func! verdict#Indent( line_num )
         return 0
     else
         " otherwise insert normal indent
-        return 2
+        return &l:shiftwidth
     endif
 endfunc
 
@@ -172,6 +172,10 @@ func! verdict#Init()
     if &l:textwidth ==# 0
         let b:prev_textwidth = &l:textwidth
         let &l:textwidth=g:verdict_default_textwidth
+    endif
+    if exists('g:verdict_overwrite_shiftwidth')
+        let b:prev_shiftwidth = &l:shiftwidth
+        let &l:shiftwidth=g:verdict_overwrite_shiftwidth
     endif
 
     if &l:formatexpr !=# 'verdict#Format()'
@@ -196,6 +200,9 @@ func! verdict#Deinit()
     endif
     if exists('b:prev_textwidth')
         let &l:textwidth=b:prev_textwidth
+    endif
+    if exists('b:prev_shiftwidth')
+        let &l:shiftwidth=b:prev_shiftwidth
     endif
 endfunc
 

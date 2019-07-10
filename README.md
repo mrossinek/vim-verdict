@@ -55,4 +55,5 @@ Configuration
 * `g:verdict_sentence_delims`: symbols delimiting a sentence [Default: `.!?`]
 * `g:verdict_sentence_suffixes`: symbols which may follow a delimiter [Default: `)]}"''`]
 * `g:verdict_default_textwidth`: default textwidth used when no other value is specified [Default: `80`]
+* `g:verdict_overwrite_shiftwidth`: option to overwrite the shiftwidth with a verdict specific value [no default]
 
