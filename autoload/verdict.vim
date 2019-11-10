@@ -1,8 +1,3 @@
-" do not load multiple times
-if exists('g:verdict_loaded')
-    finish
-endif
-
 " formatting function
 " Usage: :setlocal formatexpr=verdict#Format()
 "        now you can use gq{motion} to format the text moved over by motion
@@ -206,4 +201,3 @@ func! verdict#Deinit()
     endif
 endfunc
 
-let g:verdict_loaded = 1
